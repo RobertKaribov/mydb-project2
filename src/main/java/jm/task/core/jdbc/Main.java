@@ -17,10 +17,10 @@ public class Main {
     public static void main(String[] args) {
         userService.createUsersTable();
 
-        userService.saveUser("Сергей", "Сергеев", (byte) 78);
-        userService.saveUser("Андрей", "Андреев", (byte) 74);
-        userService.saveUser("Дмитрий", "Дмитриев", (byte) 59);
-        userService.saveUser("Роман", "Романов", (byte) 74);
+        userService.saveUser("Сергей", "Сергеев", (byte) 33);
+        userService.saveUser("Андрей", "Андреев", (byte) 24);
+        userService.saveUser("Дмитрий", "Дмитриев", (byte) 42);
+        userService.saveUser("Роман", "Романов", (byte) 29);
 
         userService.removeUserById(2);
 
