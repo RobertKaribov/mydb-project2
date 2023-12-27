@@ -9,7 +9,7 @@ public class Main {
 
         UserDao userDao = new UserDaoJDBCImpl(new Util());
         userDao.createUsersTable();
-        userDao.saveUser("Андрей", "Андреев", (byte) 34);
+        userDao.saveUser("Денис", "Денисов", (byte) 34);
         userDao.saveUser("Дмитрий", "Дмитриев", (byte) 22);
         userDao.saveUser("Сергей", "Сергеев", (byte) 39);
         userDao.saveUser("Роман", "Романов", (byte) 29);
