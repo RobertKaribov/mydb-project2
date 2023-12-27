@@ -1,32 +1,60 @@
 package jm.task.core.jdbc.util;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import jm.task.core.jdbc.model.User;
+import org.hibernate.SessionFactory;
+import org.hibernate.boot.Metadata;
+import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.Environment;
+import org.hibernate.mapping.PersistentClass;
+import org.hibernate.service.ServiceRegistry;
 
 public class Util {
+    private static Util instance = null;
+    private static SessionFactory sessionFactory;
+    private static Metadata metadata;
 
-    private static final Logger logger = Logger.getLogger(Util.class.getName());
-    private static final String URL = "jdbc:mysql://localhost:3306/mydbtest";
-    private static final String USER = "root123";
-    private static final String PASSWORD = "root";
-    private static Connection connection;
+    public static Util getInstance() {
+        if (null == instance) {
+            instance = new Util();
+        }
+        return instance;
+    }
 
-
-    public void connect(){
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
-            connection = DriverManager.getConnection(URL,USER,PASSWORD);
-            logger.log(Level.INFO,"Connection successful");
-        } catch (Exception ex) {
-            logger.log(Level.SEVERE, "Connection failed...", ex);
+    private Util() {
+        if (null == sessionFactory) {
+            ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
+                    .applySetting(Environment.USE_SQL_COMMENTS, false)
+                    .applySetting(Environment.SHOW_SQL, true)
+                    .applySetting(Environment.HBM2DDL_AUTO, "update") //update create-drop none
+                    .build();
+            sessionFactory = makeSessionFactory(serviceRegistry);
         }
     }
 
-    public Connection getConnection(){
-        if(connection == null){
-            connect();
+    public SessionFactory getSessionFactory() {
+        return sessionFactory;
+    }
+
+    private static SessionFactory makeSessionFactory(ServiceRegistry serviceRegistry) {
+        metadata = new MetadataSources(serviceRegistry)
+                .addAnnotatedClass(User.class)
+                .getMetadataBuilder()
+                .build();
+        return metadata.buildSessionFactory();
+    }
+
+    public String getTableName(String entityName) throws NullPointerException {
+        if (null == metadata) {
+            throw new NullPointerException("Metadata is null");
         }
-        return connection;
+
+        for (PersistentClass persistentClass : Util.metadata.getEntityBindings()) {
+            if (entityName.equals(persistentClass.getJpaEntityName())) {
+                return persistentClass.getTable().getName();
+            }
+        }
+
+        throw new NullPointerException(String.format("Entity {%s} not found", entityName));
     }
 }

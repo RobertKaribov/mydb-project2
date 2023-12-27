@@ -1,22 +1,33 @@
 package jm.task.core.jdbc;
 
-import jm.task.core.jdbc.dao.UserDao;
-import jm.task.core.jdbc.dao.UserDaoJDBCImpl;
-import jm.task.core.jdbc.util.Util;
+import jm.task.core.jdbc.service.UserService;
+import jm.task.core.jdbc.service.UserServiceImpl;
 
+/**
+ *  Создание таблицы User(ов)
+ *  Добавление 4 User(ов) в таблицу с данными на свой выбор. После каждого добавления должен быть вывод в
+ *  консоль ( User с именем – name добавлен в базу данных )
+ *  Получение всех User из базы и вывод в консоль ( должен быть переопределен toString в классе User)
+ *  Очистка таблицы User(ов)
+ *  Удаление таблицы
+ */
 public class Main {
-    public static void main(String[] args) {
+    private final static UserService userService = new UserServiceImpl();
 
-        UserDao userDao = new UserDaoJDBCImpl(new Util());
-        userDao.createUsersTable();
-        userDao.saveUser("Артем", "Артемов", (byte) 34);
-        userDao.saveUser("Дмитрий", "Дмитриев", (byte) 22);
-        userDao.saveUser("Сергей", "Сергеев", (byte) 39);
-        userDao.saveUser("Роман", "Романов", (byte) 29);
-        userDao.removeUserById(4);
-        System.out.println(userDao.getAllUsers());
-        userDao.cleanUsersTable();
-        userDao.dropUsersTable();
+    public static void main(String[] args) {
+        userService.createUsersTable();
+
+        userService.saveUser("Сергей", "Сергеев", (byte) 78);
+        userService.saveUser("Андрей", "Андреев", (byte) 74);
+        userService.saveUser("Дмитрий", "Дмитриев", (byte) 59);
+        userService.saveUser("Роман", "Романов", (byte) 74);
+
+        userService.removeUserById(2);
+
+        userService.getAllUsers();
+
+        userService.cleanUsersTable();
+
+        userService.dropUsersTable();
     }
 }
-
